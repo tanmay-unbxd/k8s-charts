@@ -7,4 +7,4 @@ spec:
     service:
       name: {{ .Chart.Name }}
       port:
-        number: {{ .Values.service.targetPort }} 
+        number: {{ .Values.service.port }} 
