@@ -15,41 +15,29 @@ spec:
         app: {{ .Values.app }}
     spec:
       containers:
-        - name: {{ .Chart.Name }}
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
-          imagePullPolicy: {{ .Values.image.pullPolicy }}
-          command:
-            - ./podinfo
-            - --port={{ .Values.service.httpPort }}
-          env:
-          - name: PODINFO_UI_MESSAGE
-            value: {{ quote .Values.ui.message }}
-          ports:
-            - name: http-port
-              containerPort: {{ .Values.service.httpPort }}
-          livenessProbe:
-            httpGet:
-              path: /healthz
-              port: 9898 
-            initialDelaySeconds: 5
-            periodSeconds: 2
-            timeoutSeconds: 10
-            successThreshold: 1
-            failureThreshold: 2
-          readinessProbe:
-            httpGet:
-              path: /readyz
-              port: 9898      
-            initialDelaySeconds: 5
-            periodSeconds: 2
-            timeoutSeconds: 1
-            successThreshold: 1
-            failureThreshold: 5
-          volumeMounts:
-          - name: data
-            mountPath: /data
-          resources:
+      - name: {{ .Chart.Name }}
+        image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        ports:
+          - name: http
+            containerPort: {{ .Values.service.httpPort }}        
+        command:
+          - ./podinfo
+          - --port={{ .Values.service.httpPort }}
+        env:
+        - name: PODINFO_UI_MESSAGE
+          value: {{ quote .Values.ui.message }}
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: 9898
+          initialDelaySeconds: 5
+          timeoutSeconds: 3
+        readinessProbe:
+          httpGet:
+            path: /readyz
+            port: 9898
+          initialDelaySeconds: 5 
+          timeoutSeconds: 3
+        resources:
 {{ toYaml .Values.resources | indent 12 }}
-      volumes:
-      - name: data
-        emptyDir: {}
