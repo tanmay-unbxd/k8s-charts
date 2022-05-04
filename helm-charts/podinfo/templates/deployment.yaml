@@ -28,18 +28,20 @@ spec:
             - name: http-port
               containerPort: {{ .Values.service.httpPort }}
           livenessProbe:
-            httpGet:
-              path: /healthz
-              port: 9898        
+            exec:
+              command:
+                - curl
+                - localhost:9898/healthz
             initialDelaySeconds: 1
             periodSeconds: 2
             timeoutSeconds: 10
             successThreshold: 1
             failureThreshold: 1
           readinessProbe:
-            httpGet:
-              path: /readyz
-              port: 9898           
+            exec:
+              command:
+                - curl
+                - localhost:9898/readyz         
             initialDelaySeconds: 1
             periodSeconds: 2
             timeoutSeconds: 1
